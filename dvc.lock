@@ -1,0 +1,106 @@
+schema: '2.0'
+stages:
+  download:
+    cmd: python src/download.py
+    deps:
+    - path: src/download.py
+      hash: md5
+      md5: 842706d39c617e987a69d2c5795ae1cc
+      size: 3124
+    params:
+      params.yaml:
+        download:
+          cifar_url: https://www.cs.toronto.edu/~kriz/cifar-10-python.tar.gz
+          cifar_dir: ./data/raw
+    outs:
+    - path: ./data/raw
+      hash: md5
+      md5: a8843b88ea063643ba3c092d743c2404.dir
+      size: 186214114
+      nfiles: 8
+  prepare:
+    cmd: python src/ingestion.py
+    deps:
+    - path: ./data/raw
+      hash: md5
+      md5: a8843b88ea063643ba3c092d743c2404.dir
+      size: 186214114
+      nfiles: 8
+    - path: src/ingestion.py
+      hash: md5
+      md5: b958c2073816b6c377a8fa65c8637161
+      size: 6820
+    params:
+      params.yaml:
+        download.cifar_dir: ./data/raw
+        prepare:
+          n_batches: 5
+          batch_names_select:
+          - '0'
+          - '1'
+          - '2'
+          random_state: 42
+          test_size: 0.2
+          val_size: 0.2
+          train_split_path: ./data/split/train.pkl
+          val_split_path: ./data/split/val.pkl
+          test_split_path: ./data/split/test.pkl
+    outs:
+    - path: ./data/split/test.pkl
+      hash: md5
+      md5: 7ec6fc4596bdd7aa540acf8140bc293c
+      size: 38542316
+    - path: ./data/split/train.pkl
+      hash: md5
+      md5: 9d6c26366984047e591385805e290d25
+      size: 92682933
+    - path: ./data/split/val.pkl
+      hash: md5
+      md5: 35b6d014c58903887f40553c85cd58cc
+      size: 23170866
+  train:
+    cmd: python src/train_model.py
+    deps:
+    - path: ./data/split/train.pkl
+      hash: md5
+      md5: 9d6c26366984047e591385805e290d25
+      size: 92682933
+    - path: ./data/split/val.pkl
+      hash: md5
+      md5: 35b6d014c58903887f40553c85cd58cc
+      size: 23170866
+    - path: src/train_model.py
+      hash: md5
+      md5: 4070378aa41ce5de269af9a7322dfcbb
+      size: 3086
+    params:
+      params.yaml:
+        prepare.train_split_path: ./data/split/train.pkl
+        prepare.val_split_path: ./data/split/val.pkl
+        train:
+          lr: 0.001
+          num_epochs: 2
+          model_save_path: ./data/models/best_model.pth
+    outs:
+    - path: ./data/models/best_model.pth
+      hash: md5
+      md5: 5dfa298e423244a5c5e444c54ddd42d3
+      size: 81681996
+  test:
+    cmd: python src/test_model.py
+    deps:
+    - path: ./data/models/best_model.pth
+      hash: md5
+      md5: 5dfa298e423244a5c5e444c54ddd42d3
+      size: 81681996
+    - path: ./data/split/test.pkl
+      hash: md5
+      md5: 7ec6fc4596bdd7aa540acf8140bc293c
+      size: 38542316
+    - path: src/test_model.py
+      hash: md5
+      md5: c86229417ae54d3ee8612077bc9576bc
+      size: 1858
+    params:
+      params.yaml:
+        train.model_save_path: ./data/models/best_model.pth

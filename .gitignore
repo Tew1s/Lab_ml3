@@ -1,0 +1,32 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.python-version
+.venv/
+venv/
+env/
+.env/
+.virtualenv/
+virtualenv/
+dist/
+build/
+*.egg-info/
+*.egg
+
+# Jupyter Notebooks
+.ipynb_checkpoints/
+
+# Data
+data/
+
+# Poetry
+poetry.lock
+
+# VS Code
+.vscode/
+
+# OS Specific
+.DS_Store
+Thumbs.db

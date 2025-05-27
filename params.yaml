@@ -1,0 +1,22 @@
+download:
+  cifar_url: "https://www.cs.toronto.edu/~kriz/cifar-10-python.tar.gz"
+  cifar_dir: "./data/raw"
+
+prepare:
+  n_batches: 5
+  batch_names_select: ["0", "1", "2"]
+  random_state: 42
+  test_size: 0.2
+  val_size: 0.2
+  train_split_path: "./data/split/train.pkl"
+  val_split_path: "./data/split/val.pkl"
+  test_split_path: "./data/split/test.pkl"
+
+train:
+  lr: 0.001
+  num_epochs: 2
+  model_save_path: "./data/models/best_model.pth"
+
+loader:
+  batch_size: 32
+  num_workers: 2
